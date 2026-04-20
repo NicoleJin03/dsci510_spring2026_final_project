@@ -221,3 +221,6 @@ results/
 .DS_Store
 .idea/
 __MACOSX/
+.cache/
+*.sqlite
+.cache.sqlite
