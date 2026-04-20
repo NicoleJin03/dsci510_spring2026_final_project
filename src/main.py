@@ -1,7 +1,7 @@
 from config import TRIP_DATA_URL, DATA_FOLDER, STATION_DATA_URL, OPEN_METEO_URL, BOSTON_LATITUDE, BOSTON_LONGITUDE, START_DATE, END_DATE, HOURLY_VARIABLES
 from load_data import download_trip_data, load_trip_data, download_station_data, load_station_data, get_weather_data
-from process import clean_station_data, clean_trip_data, clean_weather_data, calculate_hourly_station_flow,calculate_hourly_station_flow, calculate_pressure_index, merge_weather_data
-
+from process import clean_station_data, clean_trip_data, clean_weather_data, calculate_hourly_station_flow, \
+    calculate_hourly_station_flow, calculate_pressure_index, merge_weather_data, add_time_features
 
 def main():
     trip_csv_path = download_trip_data(TRIP_DATA_URL, DATA_FOLDER)
@@ -60,10 +60,14 @@ def main():
         print(cleaned_weather_df.head())
 
     final_df = merge_weather_data(pressure_df, cleaned_weather_df)
+    final_df = add_time_features(final_df)
     print("\nFinal Weather Data Volumn:", final_df.shape)
     print("Final Weather Data Columns:")
     print(final_df.columns.tolist())
     print(final_df.head())
+
+    final_df.to_csv("../results/final_data.csv", index=False)
+    print("Final dataset saved")
 
 if __name__ == "__main__":
     main()

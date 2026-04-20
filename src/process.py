@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # --- Step 1: Clean Station Data ---
 def clean_station_data(df):
@@ -72,6 +73,21 @@ def clean_weather_data(df):
     #make hour as datetime
     cleaned_df["hour"] = pd.to_datetime(cleaned_df["hour"],utc=True, errors="coerce").dt.tz_localize(None)
 
+    #replace placeholder value with missing values
+    cleaned_df = cleaned_df.replace("<unset>", pd.NA)
+
+    #convert weather data to numeric
+    weather_cols = [
+        "temperature_2m",
+        "precipitation",
+        "snowfall",
+        "wind_speed_10m",
+        "cloud_cover"
+    ]
+
+    for col in weather_cols:
+        cleaned_df[col] = pd.to_numeric(cleaned_df[col], errors="coerce")
+
     return cleaned_df
 
 # --- Step 4: Calculate the number of trip flow of each station in each hour ---
@@ -116,8 +132,15 @@ def calculate_pressure_index(flow_df, station_df):
     #merge hourly flow with station information
     merged_df = pd.merge(flow_df, station_df, on=["station_id"], how="left")
 
+    merged_df["net_flow"] = pd.to_numeric(merged_df["net_flow"], errors="coerce")
+    merged_df["total_docks"] = pd.to_numeric(merged_df["total_docks"], errors="coerce")
+
+    merged_df = merged_df.dropna(subset=["total_docks"])
+    merged_df = merged_df[merged_df["total_docks"] > 0]
+
     #calculate pressure index
     merged_df["pressure_index"] = merged_df["net_flow"] / merged_df["total_docks"]
+    merged_df["pressure_index"] = merged_df["pressure_index"].replace([np.inf, -np.inf], pd.NA)
 
     return merged_df
 
@@ -131,3 +154,19 @@ def merge_weather_data(pressure_df, weather_df):
     """
     final_df = pd.merge(pressure_df, weather_df, on="hour", how="left")
     return final_df
+
+# --- Step 7. Add hour/day label to the current data ---
+def add_time_features(df):
+    """
+    Add hour of day and day of week to the current data
+    :param df: dataFrame with hour column
+    :return: dataframe with more time label
+    """
+
+    timed_df = df.copy()
+
+    timed_df["hour"] = pd.to_datetime(timed_df["hour"], errors = "coerce")
+    timed_df["hour_of_day"] = df["hour"].dt.hour
+    timed_df["day_of_week"] = df["hour"].dt.day_name()
+
+    return timed_df
