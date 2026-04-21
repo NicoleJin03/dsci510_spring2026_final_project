@@ -31,6 +31,10 @@ data through the Open-Meteo API.
 - List of fields: 'data', 'temperature_2m', 'precipitation', 'snowfall', 'wind_speed_10m', 'cloud_cover' 
 - Formate: JSON
 - Estimated data size: ~4,464 data points
+Use of requests_cache
+- This project uses `requests_cache` library when retrieving weather data from Open-Meteo API.
+- `requests_cache` stores API responses locally so that repeated requests with the same parameters do not need to be sent again. When the code is run multiple times, the cached response is used instead of making a new API call.
+- The main reason i choos was because this was provided on the API website as instruction. After doing my research, I believe this is the best method for the API data retrival because the weather data are historical data, it won't change, so I cache the response locally so future runs are faster and more reliablely.
 
 # Results 
 At this current stage, no direct analytical finding result is available.

@@ -224,3 +224,4 @@ __MACOSX/
 .cache/
 *.sqlite
 .cache.sqlite
+results/*png

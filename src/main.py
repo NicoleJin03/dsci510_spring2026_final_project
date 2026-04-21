@@ -66,7 +66,7 @@ def main():
     print(final_df.columns.tolist())
     print(final_df.head())
 
-    final_df.to_csv("../results/final_data.csv", index=False)
+    final_df.to_csv("../data/final_data.csv", index=False)
     print("Final dataset saved")
 
 if __name__ == "__main__":

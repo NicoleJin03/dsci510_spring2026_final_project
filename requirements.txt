@@ -7,3 +7,6 @@ python-dotenv
 openmeteo-requests
 requests-cache
 retry-requests
+scikit-learn
+contextily
+geopandas
