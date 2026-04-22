@@ -9,6 +9,10 @@ STATION_CSV_FILE = "-External-_11.17.25_Bluebikes_Station_List.csv"
 
 #Folders & File Path
 DATA_FOLDER = "../data"
+RAW_DATA_FOLDER = "../data/raw"
+PROCESSED_DATA_FOLDER = "../data/processed"
+RESULTS_FOLDER = "../results"
+FINAL_DATA_PATH = f"{PROCESSED_DATA_FOLDER}/final_data.csv"
 TRIP_ZIP_PATH = f"{DATA_FOLDER}/{TRIP_ZIP_FILE}"
 TRIP_CSV_PATH = f"{DATA_FOLDER}/{TRIP_CSV_FILE}"
 STATION_CSV_PATH = f"{DATA_FOLDER}/{STATION_CSV_FILE}"

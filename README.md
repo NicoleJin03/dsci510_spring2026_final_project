@@ -1,13 +1,15 @@
 # The Winter Bottleneck: Analyzing Dock Capacity Pressure in Boston’s Bluebikes System
+## Project Overview
 This project explores the operational bottlenecks of Boston’s Bluebikes system during severe winter weather. 
-By combining November 2025 trip history, station metadata, and Open-Meteo hourly weather data, 
-this project aims to analyze how snow and freezing temperatures trigger imbalanced one-way trips.
-As result, this project aims to identify which districts and stations experience the highest theoretical
-overflow pressure during different weather, providing insights for optimizing rebalancing dispatch.
+By combining:
+- November 2025 trip history
+- station metadata
+- Open-Meteo hourly weather data, 
+this project constructs a **Pressure Index** to measure imbalance between bike inflow and outflow at each station.
 
-At the current stage, the project has completed the data retrieve and loading process. The code can now
-automatically download and store trip and station data, while also retrieve hourly historical weather 
-data through the Open-Meteo API.
+The goal is to:
+- identify when and where imbalance occurs
+- evaluate whether weather influence system pressure
 
 # Data sources
 1. Bluebikes Trip history
@@ -36,16 +38,36 @@ Use of requests_cache
 - `requests_cache` stores API responses locally so that repeated requests with the same parameters do not need to be sent again. When the code is run multiple times, the cached response is used instead of making a new API call.
 - The main reason i choos was because this was provided on the API website as instruction. After doing my research, I believe this is the best method for the API data retrival because the weather data are historical data, it won't change, so I cache the response locally so future runs are faster and more reliablely.
 
+# Methodology
+1. Data Processing
+   1. automated download of trip history data
+   2. automated download of station data
+   3. retrieve hourly historical weather data from open-meteo API
+   4. clean and standardized the data of trip, station, and weather
+   5. create the hourly station bike flow data
+   6. calculated the preliminary station pressure index based on next flow and total doc capacity
+   7. create the merged dataset containing station, time, pressure index, and weather information, ready to be used for analysis
+
+2. Pressure Index
+Pressure Index = net_flow / total_docks
+positive = overflow pressure
+negative = shortage pressure
+
+3. Analysis
+The project examines data from three perspectives: Temporal, Spatial, and Weather Impact on imbalance patterns and distributions.
+Weather specifically has an overall and conditional analysis for deep dive.
+
+4. Modeling
+A logistic regression model is used to predict the probability of extreme pressure (|pressure_index| > threshold)
+The reason for using logistic regression model is
+
+
 # Results 
-At this current stage, no direct analytical finding result is available.
-Current progress: 
-1. automated download of trip history data
-2. automated download of station data
-3. retrieve hourly historical weather data from open-meteo API
-4. clean and standardized the data of trip, station, and weather
-5. create the hourly station bike flow data
-6. calculated the preliminary station pressure index based on next flow and total doc capacity
-7. create the merged dataset containing station, time, pressure index, and weather information, ready to be used for analysis
+- Station location and hour of day are dominant drivers
+- Weather has weak overall influence
+- Weather impact becomes more noticeable under high-demand conditions
+- Temperature shows different effects depending on context
+- System imbalance is driven more by structural demand patterns than weather
 
 # Installation
 API: This project does not require private API key because open-meteo API is publicly accessible
@@ -62,4 +84,11 @@ Python package used so far:
 # Running analysis 
 1. install required packages: `pip install -r requiremenets.txt`
 2. From `src/` directory run:`python main.py `
-Results will appear in `results/` folder. All obtained will be stored in `data/`
+For Training pipeline: Data download -> data processing -> model training -> evaluation
+use code in terminal -> python src/main.py --train
+or more specific, use -> python src/main.py --train --subset_type loose_combined
+
+Evaluation pipeline: Load processed dataset -> run modeling
+use code in terminal -> python src.main.py --evaluation
+
+Results and charts will appear in `results/` folder. All obtained will be stored in `data/`
