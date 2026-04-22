@@ -1,5 +1,5 @@
 # The Winter Bottleneck: Analyzing Dock Capacity Pressure in Boston’s Bluebikes System
-## Project Overview
+# Project Overview
 This project explores the operational bottlenecks of Boston’s Bluebikes system during severe winter weather. 
 By combining:
 - November 2025 trip history
@@ -84,11 +84,10 @@ Python package used so far:
 # Running analysis 
 1. install required packages: `pip install -r requiremenets.txt`
 2. From `src/` directory run:`python main.py `
-For Training pipeline: Data download -> data processing -> model training -> evaluation
-use code in terminal -> python src/main.py --train
-or more specific, use -> python src/main.py --train --subset_type loose_combined
-
-Evaluation pipeline: Load processed dataset -> run modeling
-use code in terminal -> python src.main.py --evaluation
+   1. For Training pipeline: Data download -> data processing -> model training -> evaluation 
+      1. use code in terminal -> python src/main.py --train 
+      2. or more specific, use -> python src/main.py --train --subset_type loose_combined 
+   2. Evaluation pipeline: Load processed dataset -> run modeling 
+      1. use code in terminal -> python src.main.py --evaluation
 
 Results and charts will appear in `results/` folder. All obtained will be stored in `data/`
