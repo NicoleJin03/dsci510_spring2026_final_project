@@ -6,9 +6,10 @@ import numpy as np
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
+from config import SEVERE_THRESHOLD
 
 # --- Section 1 - Analyze how hour of the day influence pressure index ---
-def analyze_hourly_imbalance(df, severe_threshold=0.2):
+def analyze_hourly_imbalance(df, severe_threshold=SEVERE_THRESHOLD):
     """
     calculate the hourly imbalance using the absolute pressure index
     :param df: final dataset with hour_of_day and pressure_index
@@ -102,7 +103,7 @@ def plot_hourly_severe(hourly_imbalance, result_dir = "../results", notebook_plo
         plt.show()
 
 # --- Section 2 - Analyze how day of the week influence pressure index ---
-def analyze_weekday_imbalance(df, severe_threshold=0.2):
+def analyze_weekday_imbalance(df, severe_threshold=SEVERE_THRESHOLD):
     """
     calculate the weekday imbalance using the absolute pressure index
     :param df: final dataset
@@ -208,7 +209,7 @@ def plot_weekday_severe(weekday_imbalance, y_limits = None, result_dir = "../res
         plt.show()
 
 # --- Step 3: Analyze how location influence pressure index ---
-def analyze_station_imbalance(df, severe_threshold=0.2):
+def analyze_station_imbalance(df, severe_threshold=SEVERE_THRESHOLD):
     """
     Analyze imbalance at station level
     """
@@ -268,7 +269,7 @@ def plot_station_imbalance_distribution(station_imbalance, result_dir = "../resu
         plt.show()
 
 # --- Section 3.1.2 - Mean Pressure Hotspot Map ---
-def prepare_station_map_data(df, severe_threshold=0.2):
+def prepare_station_map_data(df, severe_threshold=SEVERE_THRESHOLD):
     """
     prepare station level data for location map plotting
     """
@@ -694,7 +695,7 @@ def get_weather_condition_subsets(df):
     ]
 
     # 3. high pressure station
-    station_imbalance = analyze_station_imbalance(working_df, severe_threshold=0.2)
+    station_imbalance = analyze_station_imbalance(working_df, severe_threshold=SEVERE_THRESHOLD)
     avg_pressure = station_imbalance["mean_abs_pressure"].mean()
 
     high_pressure_station_ids = station_imbalance.loc[
@@ -952,7 +953,7 @@ def plot_weather_sample_sizes(df, result_dir="../results", notebook_plot=False):
         plt.close()
 
 # --- Section 6. Logistic Regression Modeling on Predicting extreme pressure events and if weather adds value ---
-def prepare_logistic_model_data(df, severe_threshold=0.2, subset_type="all_data"):
+def prepare_logistic_model_data(df, severe_threshold=SEVERE_THRESHOLD, subset_type="all_data"):
     """
     prepare modeling dataset for logistic regression
     target -> is_extreme_pressure = 1 if abs_pressure_index > severe_threshold, else 0
@@ -1018,7 +1019,7 @@ def build_logistic_feature_set(model_df):
 
     return X_baseline, X_weather, y, baseline_features, weather_features
 
-def train_logistic_regression_models(df, severe_threshold=0.2, subset_type="all_data", test_size=0.2, random_state=42):
+def train_logistic_regression_models(df, severe_threshold=SEVERE_THRESHOLD, subset_type="all_data", test_size=0.2, random_state=42):
     """
     train two logistic regression models
     1. baseline model = time + location

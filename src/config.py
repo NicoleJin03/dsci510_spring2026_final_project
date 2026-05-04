@@ -25,3 +25,6 @@ BOSTON_LONGITUDE = -71.0589
 START_DATE = "2025-10-31"
 END_DATE = "2025-11-30"
 HOURLY_VARIABLES = ["temperature_2m", "precipitation", "snowfall", "wind_speed_10m", "cloud_cover"]
+
+#Number constant
+SEVERE_THRESHOLD = 0.2
