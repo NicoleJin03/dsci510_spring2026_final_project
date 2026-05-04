@@ -1,15 +1,20 @@
 # The Winter Bottleneck: Analyzing Dock Capacity Pressure in Boston’s Bluebikes System
-# Project Overview
+# Project Overview / Introduction
 This project explores the operational bottlenecks of Boston’s Bluebikes system during severe winter weather. 
+
+The primary objective is to understand:
+- when and where dock imbalance occurs
+- whether weather conditions significantly contribute to system pressure
+
+To achieve this, this project constructs a **Net Flow Pressure Index**, defined as:
+
+Pressure Index  = (Arrivals - Departures) / Dock Capacity. 
+
 By combining:
 - November 2025 trip history
 - station metadata
 - Open-Meteo hourly weather data, 
-this project constructs a **Pressure Index** to measure imbalance between bike inflow and outflow at each station.
-
-The goal is to:
-- identify when and where imbalance occurs
-- evaluate whether weather influence system pressure
+this project analyzes temporal, spatial, and enviromental drivers of system imbalance.
 
 # Data sources
 1. Bluebikes Trip history
@@ -33,6 +38,15 @@ The goal is to:
 - List of fields: 'data', 'temperature_2m', 'precipitation', 'snowfall', 'wind_speed_10m', 'cloud_cover' 
 - Formate: JSON
 - Estimated data size: ~4,464 data points
+
+Table Format
+
+| Source | Description | Data Scale | Access Method | Key Variables |
+|------|------------|-----------|--------------|--------------|
+| Bluebikes Trip Data | November 2025 trip history | 344,842 trips (13 columns) | CSV download | time, station IDs, coordinates |
+| Bluebikes Station Data | Station metadata | 597 stations (8 columns) | CSV download | station ID, location, dock capacity |
+| Open-Meteo Weather API | Hourly weather data (Nov 2025) | ~744 hourly records | API | temperature, precipitation, snowfall, wind speed, cloud cover |
+
 Use of requests_cache
 - This project uses `requests_cache` library when retrieving weather data from Open-Meteo API.
 - `requests_cache` stores API responses locally so that repeated requests with the same parameters do not need to be sent again. When the code is run multiple times, the cached response is used instead of making a new API call.
@@ -53,21 +67,40 @@ Pressure Index = net_flow / total_docks
 positive = overflow pressure
 negative = shortage pressure
 
-3. Analysis
+# Analysis
 The project examines data from three perspectives: Temporal, Spatial, and Weather Impact on imbalance patterns and distributions.
-Weather specifically has an overall and conditional analysis for deep dive.
+Weather specifically has an overall and conditional analysis for deep dive. 
+### 1. Temporal Analysis
+Examines variation in pressure imbalance across:
+- hour of day
+- day of week
 
-4. Modeling
-A logistic regression model is used to predict the probability of extreme pressure (|pressure_index| > threshold)
-The reason for using logistic regression model is
+### 2. Spatial Analysis
+Identifies station-level imbalance patterns and geographic clustering.
+
+### 3. Weather Impact Analysis
+Evaluates relationships between weather variables and pressure imbalance using:
+- correlation analysis
+- conditional analysis under high-demand conditions
+
+### 4. Modeling
+A logistic regression model is used to predict the probability of extreme imbalance 
+(|pressure_index| > threshold).
+
+Two models are compared:
+- Baseline: time and location features
+- Extended: time, location, and weather features
 
 
 # Results 
-- Station location and hour of day are dominant drivers
-- Weather has weak overall influence
-- Weather impact becomes more noticeable under high-demand conditions
-- Temperature shows different effects depending on context
-- System imbalance is driven more by structural demand patterns than weather
+Overall, system imbalance is driven more by structural demand patterns than by weather conditions.
+
+- Time and location are the primary drivers of system imbalance, especially during peak commute hours.
+- Imbalance is spatially concentrated, with high-pressure stations clustered in central Boston.
+- Weather shows weak overall correlation with pressure imbalance.
+- Weather effects become more noticeable under high-demand conditions.
+- Temperature has the strongest weather-related relationship, with colder conditions associated with higher imbalance.
+- Logistic regression results confirm that time and location explain most variation, while weather provides only marginal improvement.
 
 # Installation
 API: This project does not require private API key because open-meteo API is publicly accessible

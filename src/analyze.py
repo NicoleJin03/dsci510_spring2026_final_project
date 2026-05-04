@@ -2,7 +2,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 import pandas as pd
 import os
@@ -39,6 +38,8 @@ def plot_hourly_imbalance(hourly_imbalance, result_dir = "../results", notebook_
     """
     os.makedirs(result_dir, exist_ok=True)
 
+    plt.figure(figsize=(10, 5))
+
     plt.bar(
         hourly_imbalance["hour_of_day"],
         hourly_imbalance["mean_abs_pressure"],
@@ -57,6 +58,7 @@ def plot_hourly_imbalance(hourly_imbalance, result_dir = "../results", notebook_
     plt.title("Average Imbalance by Hour of Day")
     plt.xticks(range(24))
     plt.legend()
+    plt.tight_layout()
 
     if not notebook_plot:
         plt.savefig(f"{result_dir}/hourly_mean_imbalance.png")
@@ -978,7 +980,7 @@ def prepare_logistic_model_data(df, severe_threshold=0.2, subset_type="all_data"
         ].copy()
     elif subset_type == "strict_combined":
         model_df = model_df[
-            (model_df["hour_of_day"].isin([7.8, 9, 16, 17, 18])) &
+            (model_df["hour_of_day"].isin([7, 8, 9, 16, 17, 18])) &
             (model_df["day_of_week"].isin(["Tuesday","Wednesday","Thursday"])) &
             (model_df["is_high_pressure_station"] == 1)
         ].copy()
